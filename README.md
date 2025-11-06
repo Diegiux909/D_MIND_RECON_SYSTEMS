@@ -1,4 +1,4 @@
-# dkmdm
+# DKMDM
 project from dron and sketches and diagrams
 
 el compromiso principal es la creacion de un dron para el reconocimiento de espacios geograficos
