@@ -1,0 +1,522 @@
+Aplicación en Android Studio funcional desde el punto de vista técnico (KT y XML funcional)
+Colín Martinez Joshua Moisés.
+
+package com.example.dron
+
+import android.Manifest
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.net.wifi.WifiConfiguration
+import android.net.wifi.WifiManager
+import android.net.wifi.WifiNetworkSpecifier
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
+import android.os.Build
+import android.os.Bundle
+import android.provider.Settings
+import android.view.View
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import java.io.*
+import java.net.Socket
+import kotlin.concurrent.thread
+
+class MainActivity : AppCompatActivity() {
+
+    private val DRONE_SSID = "DRON_WIFI" // Cambia esto por el SSID de tu dron
+    private val DRONE_PASSWORD = "12345678" // Cambia esto por la contraseña de tu dron
+    private val DRONE_IP = "192.168.1.1" // IP típica del dron
+    private val DRONE_COMMAND_PORT = 8889
+    private val DRONE_VIDEO_PORT = 11111
+
+    private val PERMISSION_REQUEST_CODE = 100
+    private val CAMERA_PERMISSION_CODE = 101
+
+    private var isDroneConnected = false
+    private var commandSocket: Socket? = null
+    private var videoSocket: Socket? = null
+
+    private lateinit var tvEstado: TextView
+    private lateinit var tvGPS: TextView
+    private lateinit var tvSenal: TextView
+    private lateinit var tvBateria: TextView
+    private lateinit var tvAltitud: TextView
+    private lateinit var tvVelocidad: TextView
+    private lateinit var tvDistancia: TextView
+    private lateinit var tvOrientacion: TextView
+    private lateinit var tvTemperatura: TextView
+    private lateinit var batteryLevel: View
+    private lateinit var tvBatteryPercent: TextView
+
+    private lateinit var btnAdelante: Button
+    private lateinit var btnAtras: Button
+    private lateinit var btnIzquierda: Button
+    private lateinit var btnDerecha: Button
+    private lateinit var btnStop: Button
+    private lateinit var btnDespegar: Button
+    private lateinit var btnAterrizar: Button
+    private lateinit var btnFoto: Button
+    private lateinit var btnGrabar: Button
+    private lateinit var btnVolverCasa: Button
+
+    private lateinit var seekBarAltitude: SeekBar
+    private lateinit var seekBarRotation: SeekBar
+    private lateinit var seekBarCameraAngle: SeekBar
+    private lateinit var seekBarMaxSpeed: SeekBar
+
+    private lateinit var wifiManager: WifiManager
+    private lateinit var connectivityManager: ConnectivityManager
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        initializeViews()
+        checkPermissions()
+        setupButtons()
+        setupSeekBars()
+
+        wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        connectToDroneWiFi()
+    }
+
+    private fun initializeViews() {
+        tvEstado = findViewById(R.id.tvEstado)
+        tvGPS = findViewById(R.id.tvGPS)
+        tvSenal = findViewById(R.id.tvSenal)
+        tvBateria = findViewById(R.id.tvBateria)
+
+        tvAltitud = findViewById(R.id.tvAltitud)
+        tvVelocidad = findViewById(R.id.tvVelocidad)
+        tvDistancia = findViewById(R.id.tvDistancia)
+        tvOrientacion = findViewById(R.id.tvOrientacion)
+        tvTemperatura = findViewById(R.id.tvTemperatura)
+
+        batteryLevel = findViewById(R.id.batteryLevel)
+        tvBatteryPercent = findViewById(R.id.tvBatteryPercent)
+
+        btnAdelante = findViewById(R.id.btnAdelante)
+        btnAtras = findViewById(R.id.btnAtras)
+        btnIzquierda = findViewById(R.id.btnIzquierda)
+        btnDerecha = findViewById(R.id.btnDerecha)
+        btnStop = findViewById(R.id.btnStop)
+        btnDespegar = findViewById(R.id.btnDespegar)
+        btnAterrizar = findViewById(R.id.btnAterrizar)
+        btnFoto = findViewById(R.id.btnFoto)
+        btnGrabar = findViewById(R.id.btnGrabar)
+        btnVolverCasa = findViewById(R.id.btnVolverCasa)
+
+        seekBarAltitude = findViewById(R.id.seekBarAltitude)
+        seekBarRotation = findViewById(R.id.seekBarRotation)
+        seekBarCameraAngle = findViewById(R.id.seekBarCameraAngle)
+        seekBarMaxSpeed = findViewById(R.id.seekBarMaxSpeed)
+
+        updateConnectionStatus(false)
+    }
+
+    private fun checkPermissions() {
+        val permissions = mutableListOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.CHANGE_WIFI_STATE,
+            Manifest.permission.CAMERA
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            permissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+        }
+
+        val permissionsToRequest = permissions.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+
+        if (permissionsToRequest.isNotEmpty()) {
+            ActivityCompat.requestPermissions(
+                this,
+                permissionsToRequest.toTypedArray(),
+                PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    private fun connectToDroneWiFi() {
+        if (!wifiManager.isWifiEnabled) {
+            AlertDialog.Builder(this)
+                .setTitle("WiFi Desactivado")
+                .setMessage("Por favor activa el WiFi para conectarte al dron")
+                .setPositiveButton("Activar WiFi") { _, _ ->
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        startActivity(Intent(Settings.Panel.ACTION_WIFI))
+                    } else {
+                        wifiManager.isWifiEnabled = true
+                    }
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
+            return
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            connectWiFiAndroid10Plus()
+        } else {
+            connectWiFiLegacy()
+        }
+    }
+
+    private fun connectWiFiAndroid10Plus() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val specifier = WifiNetworkSpecifier.Builder()
+                .setSsid(DRONE_SSID)
+                .setWpa2Passphrase(DRONE_PASSWORD)
+                .build()
+
+            val request = NetworkRequest.Builder()
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                .setNetworkSpecifier(specifier)
+                .build()
+
+            val networkCallback = object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: android.net.Network) {
+                    super.onAvailable(network)
+                    connectivityManager.bindProcessToNetwork(network)
+                    runOnUiThread {
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Conectado al WiFi del dron",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        connectToDrone()
+                    }
+                }
+
+                override fun onUnavailable() {
+                    super.onUnavailable()
+                    runOnUiThread {
+                        Toast.makeText(
+                            this@MainActivity,
+                            "No se pudo conectar al dron",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+
+            connectivityManager.requestNetwork(request, networkCallback)
+        }
+    }
+
+
+    private fun connectWiFiLegacy() {
+        val wifiConfig = WifiConfiguration().apply {
+            SSID = "\"$DRONE_SSID\""
+            preSharedKey = "\"$DRONE_PASSWORD\""
+        }
+
+        val netId = wifiManager.addNetwork(wifiConfig)
+        wifiManager.disconnect()
+        wifiManager.enableNetwork(netId, true)
+        wifiManager.reconnect()
+
+        // Esperar un momento para la conexión
+        Thread.sleep(3000)
+        connectToDrone()
+    }
+
+
+    private fun connectToDrone() {
+        thread {
+            try {
+                // Conectar socket de comandos
+                commandSocket = Socket(DRONE_IP, DRONE_COMMAND_PORT)
+
+                runOnUiThread {
+                    isDroneConnected = true
+                    updateConnectionStatus(true)
+                    Toast.makeText(this, "Dron conectado", Toast.LENGTH_SHORT).show()
+
+                
+                    initializeCamera()
+
+                    startTelemetryListener()
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    Toast.makeText(
+                        this,
+                        "Error al conectar: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun initializeCamera() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            thread {
+                try {
+                    videoSocket = Socket(DRONE_IP, DRONE_VIDEO_PORT)
+                    sendCommand("streamon")
+                    runOnUiThread {
+                        Toast.makeText(this, "Cámara activada", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    runOnUiThread {
+                        Toast.makeText(
+                            this,
+                            "Error al iniciar cámara: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        } else {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.CAMERA),
+                CAMERA_PERMISSION_CODE
+            )
+        }
+    }
+
+    private fun startTelemetryListener() {
+        thread {
+            while (isDroneConnected) {
+                try {
+                    Thread.sleep(1000)
+
+                    runOnUiThread {
+                        updateTelemetrySimulated()
+                    }
+                } catch (e: Exception) {
+                    break
+                }
+            }
+        }
+    }
+
+    private fun updateTelemetrySimulated() {
+        
+        tvAltitud.text = "${(Math.random() * 50).toInt()} m"
+        tvVelocidad.text = "${(Math.random() * 15).toInt()} m/s"
+        tvDistancia.text = "${(Math.random() * 200).toInt()} m"
+        tvOrientacion.text = "${(Math.random() * 360).toInt()}°"
+        tvTemperatura.text = "${(20 + Math.random() * 10).toInt()}°C"
+    }
+
+    private fun sendCommand(command: String) {
+        if (!isDroneConnected) {
+            Toast.makeText(this, "Dron no conectado", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        thread {
+            try {
+                val outputStream = commandSocket?.getOutputStream()
+                val writer = PrintWriter(outputStream, true)
+                writer.println(command)
+
+                runOnUiThread {
+                    Toast.makeText(this, "Comando enviado: $command", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    Toast.makeText(
+                        this,
+                        "Error al enviar comando: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun setupButtons() {
+    
+        btnAdelante.setOnClickListener {
+            sendCommand("forward 50")
+        }
+
+        btnAtras.setOnClickListener {
+            sendCommand("back 50")
+        }
+
+        btnIzquierda.setOnClickListener {
+            sendCommand("left 50")
+        }
+
+        btnDerecha.setOnClickListener {
+            sendCommand("right 50")
+        }
+
+        btnStop.setOnClickListener {
+            sendCommand("stop")
+        }
+
+    
+        btnDespegar.setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("Despegar")
+                .setMessage("¿Estás seguro de que quieres despegar el dron?")
+                .setPositiveButton("Sí") { _, _ ->
+                    sendCommand("takeoff")
+                }
+                .setNegativeButton("No", null)
+                .show()
+        }
+
+        btnAterrizar.setOnClickListener {
+            sendCommand("land")
+        }
+
+        btnFoto.setOnClickListener {
+            sendCommand("takephoto")
+        }
+
+        btnGrabar.setOnClickListener {
+            sendCommand("record")
+        }
+
+        btnVolverCasa.setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("Volver a Casa")
+                .setMessage("¿Quieres que el dron regrese al punto de inicio?")
+                .setPositiveButton("Sí") { _, _ ->
+                    sendCommand("home")
+                }
+                .setNegativeButton("No", null)
+                .show()
+        }
+
+    
+        findViewById<Button>(R.id.btnModoNormal).setOnClickListener {
+            sendCommand("mode normal")
+        }
+
+        findViewById<Button>(R.id.btnModoSport).setOnClickListener {
+            sendCommand("mode sport")
+        }
+
+        findViewById<Button>(R.id.btnModoEstable).setOnClickListener {
+            sendCommand("mode stable")
+        }
+
+        findViewById<Button>(R.id.btnModoCine).setOnClickListener {
+            sendCommand("mode cinema")
+        }
+    }
+
+    private fun setupSeekBars() {
+        seekBarAltitude.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    sendCommand("up $progress")
+                }
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        seekBarRotation.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    val rotation = progress - 180
+                    sendCommand("cw $rotation")
+                }
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        seekBarCameraAngle.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    val angle = progress - 90
+                    sendCommand("camera angle $angle")
+                }
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        seekBarMaxSpeed.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    sendCommand("speed $progress")
+                }
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+    }
+
+    private fun updateConnectionStatus(connected: Boolean) {
+        isDroneConnected = connected
+        if (connected) {
+            tvEstado.text = "CONECTADO"
+            tvEstado.setTextColor(getColor(android.R.color.holo_green_light))
+        } else {
+            tvEstado.text = "DESCONECTADO"
+            tvEstado.setTextColor(getColor(android.R.color.holo_red_light))
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when (requestCode) {
+            PERMISSION_REQUEST_CODE -> {
+                if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                    connectToDroneWiFi()
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Se necesitan permisos para conectar al dron",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+            CAMERA_PERMISSION_CODE -> {
+                if (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    initializeCamera()
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Se necesita permiso de cámara",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        isDroneConnected = false
+        try {
+            sendCommand("streamoff")
+            commandSocket?.close()
+            videoSocket?.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+}
