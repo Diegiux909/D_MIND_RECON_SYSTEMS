@@ -1,0 +1,125 @@
+Versión de código KT (Kotlin) para la vinculación de Wi-Fi y la IP de nuestro dron
+Torres Rojas Guillermo 
+
+package com.example.dron
+
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.net.wifi.WifiManager
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.TextureView
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
+import java.net.HttpURLConnection
+import java.net.URL
+
+class MainActivity : AppCompatActivity() {
+
+    private var cameraView: TextureView? = null
+    private var tvWifiStatus: TextView? = null
+    private var player: ExoPlayer? = null
+
+    /
+    private val DRONE_IP = "192.168.1.1" 
+    private val VIDEO_URL = "rtsp://192.168.1.1:554/live" 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+       
+        try {
+            setContentView(R.layout.activity_main)
+        } catch (e: Exception) {
+            e.printStackTrace() // Si falla aquí, es el XML
+            return
+        }
+
+      
+        cameraView = findViewById(R.id.cameraView)
+        tvWifiStatus = findViewById(R.id.tvWifiStatus)
+
+        val btnPhoto = findViewById<ImageButton>(R.id.btnPhoto)
+        val btnVideo = findViewById<ImageButton>(R.id.btnVideo)
+
+      
+        btnPhoto.setOnClickListener { sendCommand("photo") }
+        btnVideo.setOnClickListener { sendCommand("video") }
+
+  
+        checkPermissions()
+    }
+
+    private fun startVideo() {
+        if (player != null) return // Ya iniciado
+
+        try {
+            player = ExoPlayer.Builder(this).build()
+            player?.setVideoTextureView(cameraView)
+
+            val mediaItem = MediaItem.fromUri(Uri.parse(VIDEO_URL))
+            player?.setMediaItem(mediaItem)
+            player?.prepare()
+            player?.play()
+
+            Toast.makeText(this, "Intentando video...", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error Video: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun sendCommand(cmd: String) {
+        Thread {
+            try {
+                // Comando HTTP simple en segundo plano para no congelar la app
+                val url = URL("http://$DRONE_IP/cmd?action=$cmd")
+                val conn = url.openConnection() as HttpURLConnection
+                conn.connectTimeout = 1000
+                conn.connect()
+                conn.responseCode
+            } catch (e: Exception) {
+                // Ignorar errores de red
+            }
+        }.start()
+    }
+
+  
+    private fun checkPermissions() {
+        val permissions = mutableListOf(
+            Manifest.permission.INTERNET,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+ 
+        if (Build.VERSION.SDK_INT >= 33) {
+            permissions.add(Manifest.permission.NEARBY_WIFI_DEVICES)
+        }
+
+        if (permissions.all { ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED }) {
+            startVideo() // Si ya tiene permisos, arranca video
+        } else {
+            ActivityCompat.requestPermissions(this, permissions.toTypedArray(), 100)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 100 && grantResults.isNotEmpty()) {
+            startVideo()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        player?.release()
+        player = null
+    }
+}
