@@ -1,0 +1,726 @@
+Pirmer boceto de nuestra app transmitido a Android Studio 
+López Cárdenas Ángel Daniel 
+
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0A4D68"
+    android:fillViewport="true"
+    android:id="@+id/main">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CONTROL DE DRON"
+            android:textSize="28sp"
+            android:textColor="@android:color/white"
+            android:textAlignment="center"
+            android:fontFamily="sans-serif-light"
+            android:letterSpacing="0.1"
+            android:paddingVertical="20dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center"
+            android:background="#0DFFFFFF"
+            android:layout_marginBottom="16dp">
+
+            
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Estado"
+                    android:textSize="12sp"
+                    android:textColor="#B3FFFFFF"/>
+                <TextView
+                    android:id="@+id/tvEstado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CONECTADO"
+                    android:textSize="18sp"
+                    android:textColor="#00FF88"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="GPS"
+                    android:textSize="12sp"
+                    android:textColor="#B3FFFFFF"/>
+                <TextView
+                    android:id="@+id/tvGPS"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="12 SAT"
+                    android:textSize="18sp"
+                    android:textColor="#00FF88"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Señal"
+                    android:textSize="12sp"
+                    android:textColor="#B3FFFFFF"/>
+                <TextView
+                    android:id="@+id/tvSenal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="98%"
+                    android:textSize="18sp"
+                    android:textColor="#00FF88"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+         
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Batería"
+                    android:textSize="12sp"
+                    android:textColor="#B3FFFFFF"/>
+                <TextView
+                    android:id="@+id/tvBateria"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="75%"
+                    android:textSize="18sp"
+                    android:textColor="#00FF88"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+     
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="4">
+
+          
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="6dp"
+                android:background="#14FFFFFF"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Telemetría"
+                    android:textSize="16sp"
+                    android:textColor="#00D4FF"
+                    android:layout_marginBottom="16dp"/>
+            
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="8dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Altitud"
+                        android:textColor="#B3FFFFFF"
+                        android:textSize="14sp"/>
+                    <TextView
+                        android:id="@+id/tvAltitud"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="25.3 m"
+                        android:textColor="#00FF88"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="8dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Velocidad"
+                        android:textColor="#B3FFFFFF"
+                        android:textSize="14sp"/>
+                    <TextView
+                        android:id="@+id/tvVelocidad"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="8.5 m/s"
+                        android:textColor="#00FF88"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="8dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Distancia"
+                        android:textColor="#B3FFFFFF"
+                        android:textSize="14sp"/>
+                    <TextView
+                        android:id="@+id/tvDistancia"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="142 m"
+                        android:textColor="#00FF88"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="8dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Orientación"
+                        android:textColor="#B3FFFFFF"
+                        android:textSize="14sp"/>
+                    <TextView
+                        android:id="@+id/tvOrientacion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="215°"
+                        android:textColor="#00FF88"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="8dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Temperatura"
+                        android:textColor="#B3FFFFFF"
+                        android:textSize="14sp"/>
+                    <TextView
+                        android:id="@+id/tvTemperatura"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="28°C"
+                        android:textColor="#00FF88"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Energía"
+                    android:textSize="16sp"
+                    android:textColor="#00D4FF"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="#1AFFFFFF">
+
+                    <View
+                        android:id="@+id/batteryLevel"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:background="#00FF88"/>
+
+                    <TextView
+                        android:id="@+id/tvBatteryPercent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="75%"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold"/>
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="~18 min restantes"
+                    android:textSize="12sp"
+                    android:textColor="#B3FFFFFF"
+                    android:textAlignment="center"
+                    android:layout_marginTop="8dp"/>
+
+                <!-- Map Container -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="16dp"
+                    android:background="#80000000">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Mapa GPS"
+                        android:textColor="#80FFFFFF"/>
+                </FrameLayout>
+
+            </LinearLayout>
+
+        
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:orientation="vertical"
+                android:layout_margin="6dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="#14FFFFFF"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Transmisión en Vivo"
+                        android:textSize="16sp"
+                        android:textColor="#00D4FF"
+                        android:layout_marginBottom="12dp"/>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:background="#FF000000">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Cámara FPV"
+                            android:textSize="16sp"
+                            android:textColor="#888888"/>
+
+                        <Button
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:background="@android:color/transparent"
+                            android:enabled="false"/>
+                    </FrameLayout>
+
+                </LinearLayout>
+
+              
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#14FFFFFF"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Controles de Vuelo"
+                        android:textSize="16sp"
+                        android:textColor="#00D4FF"
+                        android:layout_marginBottom="16dp"/>
+
+              
+                    <GridLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:columnCount="3"
+                        android:rowCount="3"
+                        android:alignmentMode="alignMargins"
+                        android:layout_gravity="center">
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_columnWeight="1"/>
+
+                        <Button
+                            android:id="@+id/btnAdelante"
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_columnWeight="1"
+                            android:layout_margin="4dp"
+                            android:text="▲\nAdelante"
+                            android:textSize="16sp"
+                            android:backgroundTint="#3300D4FF"
+                            android:textColor="@android:color/white"/>
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_columnWeight="1"/>
+
+                        <Button
+                            android:id="@+id/btnIzquierda"
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_columnWeight="1"
+                            android:layout_margin="4dp"
+                            android:text="◄\nIzq"
+                            android:textSize="16sp"
+                            android:backgroundTint="#3300D4FF"
+                            android:textColor="@android:color/white"/>
+
+                        <Button
+                            android:id="@+id/btnStop"
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_columnWeight="1"
+                            android:layout_margin="4dp"
+                            android:text="⊙\nStop"
+                            android:textSize="16sp"
+                            android:backgroundTint="#4DFF0000"
+                            android:textColor="@android:color/white"/>
+
+                        <Button
+                            android:id="@+id/btnDerecha"
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_columnWeight="1"
+                            android:layout_margin="4dp"
+                            android:text="►\nDer"
+                            android:textSize="16sp"
+                            android:backgroundTint="#3300D4FF"
+                            android:textColor="@android:color/white"/>
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_columnWeight="1"/>
+
+                        <Button
+                            android:id="@+id/btnAtras"
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_columnWeight="1"
+                            android:layout_margin="4dp"
+                            android:text="▼\nAtrás"
+                            android:textSize="16sp"
+                            android:backgroundTint="#3300D4FF"
+                            android:textColor="@android:color/white"/>
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_columnWeight="1"/>
+
+                    </GridLayout>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Altitud"
+                        android:textSize="14sp"
+                        android:textColor="#CCFFFFFF"
+                        android:layout_marginTop="16dp"/>
+
+                    <SeekBar
+                        android:id="@+id/seekBarAltitude"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:max="100"
+                        android:progress="50"
+                        android:progressTint="#00FF88"
+                        android:thumbTint="#00FF88"/>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rotación"
+                        android:textSize="14sp"
+                        android:textColor="#CCFFFFFF"
+                        android:layout_marginTop="12dp"/>
+
+                    <SeekBar
+                        android:id="@+id/seekBarRotation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:max="360"
+                        android:progress="180"
+                        android:progressTint="#00FF88"
+                        android:thumbTint="#00FF88"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <ScrollView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="6dp"
+                android:background="#14FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Acciones Rápidas"
+                        android:textSize="16sp"
+                        android:textColor="#00D4FF"
+                        android:layout_marginBottom="12dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+
+                        <Button
+                            android:id="@+id/btnDespegar"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp"
+                            android:text="Despegar"
+                            android:backgroundTint="#00FF88"
+                            android:textColor="@android:color/black"
+                            android:textStyle="bold"/>
+
+                        <Button
+                            android:id="@+id/btnAterrizar"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="4dp"
+                            android:text="Aterrizar"
+                            android:backgroundTint="#FF6B6B"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cámara"
+                        android:textSize="16sp"
+                        android:textColor="#00D4FF"
+                        android:layout_marginBottom="12dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+
+                        <Button
+                            android:id="@+id/btnFoto"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp"
+                            android:text="Foto"
+                            android:backgroundTint="#7C4DFF"
+                            android:textColor="@android:color/white"/>
+
+                        <Button
+                            android:id="@+id/btnGrabar"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="4dp"
+                            android:text="Grabar"
+                            android:backgroundTint="#FF1744"
+                            android:textColor="@android:color/white"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Modos de Vuelo"
+                        android:textSize="16sp"
+                        android:textColor="#00D4FF"
+                        android:layout_marginBottom="12dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
+
+                        <Button
+                            android:id="@+id/btnModoNormal"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp"
+                            android:text="Normal"
+                            android:backgroundTint="#00BCD4"
+                            android:textColor="@android:color/white"/>
+
+                        <Button
+                            android:id="@+id/btnModoSport"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="4dp"
+                            android:text="Sport"
+                            android:backgroundTint="#FF9800"
+                            android:textColor="@android:color/white"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+
+                        <Button
+                            android:id="@+id/btnModoEstable"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp"
+                            android:text="Estable"
+                            android:backgroundTint="#4CAF50"
+                            android:textColor="@android:color/white"/>
+
+                        <Button
+                            android:id="@+id/btnModoCine"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="4dp"
+                            android:text="Cine"
+                            android:backgroundTint="#9C27B0"
+                            android:textColor="@android:color/white"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Retorno"
+                        android:textSize="16sp"
+                        android:textColor="#00D4FF"
+                        android:layout_marginBottom="12dp"/>
+
+                    <Button
+                        android:id="@+id/btnVolverCasa"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Volver a Casa"
+                        android:backgroundTint="#FFD700"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:layout_marginBottom="16dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Configuración"
+                        android:textSize="16sp"
+                        android:textColor="#00D4FF"
+                        android:layout_marginBottom="12dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Inclinación Cámara"
+                        android:textSize="14sp"
+                        android:textColor="#CCFFFFFF"/>
+
+                    <SeekBar
+                        android:id="@+id/seekBarCameraAngle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:max="120"
+                        android:progress="90"
+                        android:progressTint="#00FF88"
+                        android:thumbTint="#00FF88"
+                        android:layout_marginBottom="12dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Velocidad Máx"
+                        android:textSize="14sp"
+                        android:textColor="#CCFFFFFF"/>
+
+                    <SeekBar
+                        android:id="@+id/seekBarMaxSpeed"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:max="20"
+                        android:progress="10"
+                        android:progressTint="#00FF88"
+                        android:thumbTint="#00FF88"/>
+
+                </LinearLayout>
+            </ScrollView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
