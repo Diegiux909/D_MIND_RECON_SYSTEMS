@@ -1,0 +1,213 @@
+Diseño preliminar de los joysticks para la aplicación (prototipo).
+Torres Rojas Guillermo.
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:keepScreenOn="true">
+
+    <TextureView
+        android:id="@+id/cameraView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@android:drawable/ic_menu_crop"
+        android:scaleType="fitXY"
+        android:alpha="0.1"
+        android:tint="#00FF00"/>
+
+    <LinearLayout
+        android:id="@+id/topPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#80000000"
+        android:padding="8dp"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvPower"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="● SYSTEM ON"
+            android:textColor="#00FF00"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_marginStart="16dp"
+            android:background="@drawable/hud_border"
+            android:padding="8dp"/>
+
+        <Space android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/tvWifiStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="WIFI: SCANNING..."
+            android:textColor="#00FFFF"
+            android:textStyle="bold"
+            android:textSize="14sp"/>
+
+        <Space android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/tvBattery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BAT 30%"
+            android:textColor="#FFCC00"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/hud_border"
+            android:padding="8dp"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:background="@drawable/hud_border"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ALTITUD / GIRO"
+        android:textColor="#80FFFFFF"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="40dp"
+        android:layout_marginStart="85dp"/>
+
+    <SeekBar
+        android:id="@+id/leftSliderV"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="110dp"
+        android:rotation="270"
+        android:max="100"
+        android:progress="50"
+        android:progressTint="#00FF00"
+        android:thumbTint="#00FF00"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <SeekBar
+        android:id="@+id/leftSliderH"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="110dp"
+        android:max="100"
+        android:progress="50"
+        android:progressTint="#00FF00"
+        android:thumbTint="#00FF00"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:background="@drawable/hud_border"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MOVIMIENTO"
+        android:textColor="#80FFFFFF"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="40dp"
+        android:layout_marginEnd="90dp"/>
+
+    <SeekBar
+        android:id="@+id/rightSliderV"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="110dp"
+        android:rotation="270"
+        android:max="100"
+        android:progress="50"
+        android:progressTint="#00FFFF"
+        android:thumbTint="#00FFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <SeekBar
+        android:id="@+id/rightSliderH"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="110dp"
+        android:max="100"
+        android:progress="50"
+        android:progressTint="#00FFFF"
+        android:thumbTint="#00FFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="80dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/btnPhoto"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/hud_border"
+            android:src="@android:drawable/ic_menu_camera"
+            android:tint="#FFFFFF"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <ImageButton
+            android:id="@+id/btnVideo"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/hud_border"
+            android:src="@android:drawable/ic_menu_slideshow"
+            android:tint="#FFFFFF"
+            android:padding="12dp"/>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@android:drawable/ic_menu_add"
+        android:tint="#8000FF00"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+-- Border para los 
